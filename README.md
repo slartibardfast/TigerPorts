@@ -1,4 +1,4 @@
-# MPTigerRepo
+# TigerPorts
 A local repository of ports that are configured for MacOSX 10.4 Tiger and shadow newer, often incompatible versions of ports.
 
 MacOSX 10.4 (Tiger) has some incompatabilities with some of the newest ports available on MacPorts. The goal of project is to generate a "local repository" of portfiles and associated patches that will in some cases modify the existing portfiles to work on Tiger, and in other cases will bring back older versions of ports that still work on Tiger but can't easily be found in the current MacPorts portfile distribution.
