@@ -7,10 +7,9 @@ To use a local repository, you designate a folder to be your local MacPorts repo
 
 Finally, you need to add the local repository to your macports sources file (usually "/opt/local/etc/macports/sources.conf"), putting your local repository AHEAD of the Macports repository:
 
------
 file:///opt/myports
+
 rsync://rsync.macports.org/release/tarballs/ports.tar [default]
---------
 
 Then, when you look for ports, you will find your own local portfiles before you find the official macports portfiles. That's how this process works.
 
