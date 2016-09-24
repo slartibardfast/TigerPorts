@@ -13,3 +13,9 @@ rsync://rsync.macports.org/release/tarballs/ports.tar [default]
 
 Then, when you look for ports, you will find your own local portfiles before you find the official macports portfiles. That's how this process works.
 
+qt4-mac --> an older version that still works on Tiger
+
+libassuan --> a minor edit that allows it to compile on Tiger
+
+mysql56 --> removed some ATOMIC functions that are not compatible with PPC, however be aware that this version only passes about 90% of the mysql test suite. You might want to stick with mysql55; it passes over 98% of the test suite.
+
