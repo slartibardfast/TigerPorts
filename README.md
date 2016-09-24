@@ -19,4 +19,4 @@ libassuan --> a minor edit that allows it to compile on Tiger
 
 mysql56 --> removed some ATOMIC functions that are not compatible with PPC, however be aware that this version only passes about 90% of the mysql test suite. You might want to stick with mysql55; it passes over 98% of the test suite.
 
-tmuc --> older version that compiles and runs on Tiger
+tmux --> older version that compiles and runs on Tiger
