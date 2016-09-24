@@ -1,6 +1,10 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # $Id: Portfile 87272 2011-11-15 17:45:11Z ryandesign@macports.org $
 
+# this is an out-of-date qt4-mac portfile that specifies
+# the last version of qt4-mac to run on Tiger
+# updated to new source download site 20160924 - kc
+
 PortSystem          1.0
 
 # use the qt4 group; set 'building_qt4' so that the portgroup
@@ -24,7 +28,7 @@ long_description    Qt Tool Kit: A cross-platform framework \
                     (headers, data, and libraries) for writing \
                     cross-platform GUI-based applications.
 
-master_sites        trolltech
+master_sites        http://download.qt.io/archive/qt/4.7/
 distname            qt-everywhere-opensource-src-${version}
 
 # 4.7.4 was stealth-updated; see #31252
@@ -551,3 +555,9 @@ description {Build for Native OSX Quartz GUI, not X11 (default)} {}
 livecheck.type      regex
 livecheck.url       http://get.qt.nokia.com/qt/source/
 livecheck.regex     "qt-everywhere-opensource-src-(\[0-9a-z.-\]+)${extract.suffix}"
+
+notes \
+"This version of qt4-mac installs qt version 4.7.4. Although this is not  \
+ \nThe current version of qt4, it is the last version capable of installing \
+ \nand running on MacOSX Tiger."
+
