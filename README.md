@@ -3,7 +3,7 @@ A local repository of ports that are configured for MacOSX 10.4 Tiger and shadow
 
 MacOSX 10.4 (Tiger) has some incompatabilities with some of the newest ports available on MacPorts. The goal of project is to generate a "local repository" of portfiles and associated patches that will in some cases modify the existing portfiles to work on Tiger, and in other cases will bring back older versions of ports that still work on Tiger but can't easily be found in the current MacPorts portfile distribution.
 
-To use a local repository, you designate a folder to be your local MacPorts repository (collection of portfiles and patches). Then you index them using "sudo portindex" from the base directory. I use "/opt/myports" as the base directory for my local repository, and run "sudo portindex" from that directory.
+To use a local repository, you designate a folder to be your local MacPorts repository (collection of portfiles and patches). Then you index them using "sudo portindex" from the base directory. In this case, you could go to the /opt directory, and clone the TigerPorts git repository right there. If that works for you, then use "/opt/TigerPorts" as the base directory for the local repository, and run "sudo portindex" from that directory.
 
 Finally, you need to add the local repository to your macports sources file (usually "/opt/local/etc/macports/sources.conf"), putting your local repository AHEAD of the Macports repository:
 
