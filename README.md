@@ -11,7 +11,7 @@ file:///opt/TigerPorts
 
 rsync://rsync.macports.org/release/tarballs/ports.tar [default]
 
-Then, when you look for ports, you will find your own local portfiles before you find the official macports portfiles. That's how this process works.
+Then, when you look for ports, macports will find the tigerports portfiles before the official macports portfiles. That's how this process works. Other port searches and requests will pass through tigerports and use the macports repository.
 
 qt4-mac --> an older version that still works on Tiger
 
@@ -19,3 +19,4 @@ libassuan --> a minor edit that allows it to compile on Tiger
 
 mysql56 --> removed some ATOMIC functions that are not compatible with PPC, however be aware that this version only passes about 90% of the mysql test suite. You might want to stick with mysql55; it passes over 98% of the test suite.
 
+tmuc --> older version that compiles and runs on Tiger
