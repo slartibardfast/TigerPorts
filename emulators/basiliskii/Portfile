@@ -1,0 +1,49 @@
+# $Id: Portfile 135117 2015-04-15 19:51:30Z ryandesign@macports.org $
+
+PortSystem              1.0
+PortGroup               github 1.0
+github.setup            cebix macemu 1bf6f4d64023851e5de17c7d3090db99c7671c04
+version                 20160829
+name                    basiliskii
+categories              emulators
+license                 GPL-2+
+platforms               darwin
+maintainers             gmail.com:ken-cunningham-webuse openmaintainer
+description             Opensource 68k Mac emulator.
+
+long_description \
+    Longstanding 68K Macintosh emulator. You will need an appropriate Macintosh ROM image and a copy of Mac OS (0.x thru 7.5 for Classic emulation, 7.x or 8.0/8.1 for Mac II emulation). There is considerable available information regarding how to set up BasiliskII, for example <http://www.emaculation.com/doku.php/basiliskii_osx_setup>.
+
+homepage                http://basilisk.cebix.net/
+
+checksums               rmd160  dfb34774447bffa1f741846889f78914d1d2f7f5 \
+                        sha256  cddbeada2ad55db44e4b2312dc2fa94ff3c5667e85bacfa057765e4269f3b1da
+
+#build depends on autoconf
+
+compiler.blacklist-append   {clang < 500} macports-clang-2.9 macports-clang-3.0 macports-clang-3.1 macports-clang-3.2 macports-clang-3.3
+compiler.blacklist-append   {*gcc-4.[1-9]} {*gcc-3*}
+
+patchfiles-append       001-Basilisk-makefile-in-ditto-patch.diff \
+                        002-configure-ac-delete-stdlib-addition-darwin.diff
+
+worksrcdir              ${distname}/BasiliskII/src/Unix
+
+configure.cmd           ./autogen.sh
+configure.optflags      -O3
+
+# Darwin8 and probably Darwin9? powerpc -- outstanding!
+configure.args          --disable-vosf --without-esd --without-mon --enable-macosx-sound --enable-macosx-gui --without-gtk
+supported_archs        ppc
+
+universal_variant       no
+
+build.target BasiliskII BasiliskII_app
+
+post-destroot {
+        copy ${worksrcpath}/BasiliskII.app ${destroot}${applications_dir}
+}
+
+variant useoldgcc description {the ancient versions of gcc40 sometimes can work better for building BasiliskII} {
+	compiler.whitelist          gcc-4.0 apple-gcc40
+}
