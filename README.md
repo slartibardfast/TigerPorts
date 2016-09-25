@@ -13,12 +13,18 @@ rsync://rsync.macports.org/release/tarballs/ports.tar [default]
 
 Then, when you look for ports, macports will find the tigerports portfiles before the official macports portfiles. That's how this process works. Other port searches and requests will pass through tigerports and use the macports repository.
 
+Here are some instructions from the macports website <https://guide.macports.org/chunked/development.local-repositories.html>. The only thing I'd change in these instructions is to use /opt/TigerPorts due to permissions issues, but you can use other locations as well if you need to (like /Users/Shared/TigerPorts, for example).
+
+You might wonder why there are not very many ports in TigerPorts -- and that is because in general, almost all of the 20,000 ports on MacPorts "just work" and don't need to be replaced with older versions or modified to work on Tiger. You will be surprised, I think how many current versions of software compile and run very nicely on Tiger just "out of the box". Xorg-Server and all the applications, Apache2, Mysql55, and many many more.
+
 Some examples of what is in TigerPorts:
 
-qt4-mac --> an older version that still works on Tiger
+qt4-mac --> an older version that still works on Tiger, and allows many qt4 applications to install and work.
 
 libassuan --> a minor edit that allows it to compile on Tiger
 
 mysql56 --> removed some ATOMIC functions that are not compatible with PPC, and this port now builds, installs, and runs on Tiger (and Leopard PPC, probably). However be aware that this version only passes about 90% of the mysql test suite. You might want to stick with mysql55 for Tiger, as it passes over 98% of the test suite.
 
 tmux --> older version that compiles and runs on Tiger
+
+If you have any contributions to make to this collection, please feel free to add, suggest, or put in a pull request!
