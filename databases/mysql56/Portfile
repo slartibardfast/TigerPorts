@@ -106,11 +106,11 @@ if {$subport eq $name} {
     configure.cppflags-delete \
                         -I${prefix}/include
 
-#platform darwin powerpc {
-#    configure.args-append \
-#                        -DHAVE_IB_GCC_ATOMIC_BUILTINS=0 \
-#                        -DHAVE_IB_GCC_ATOMIC_TEST_AND_SET=0
-#}                        
+platform darwin powerpc {
+    configure.args-append \
+                        -DHAVE_IB_GCC_ATOMIC_BUILTINS=0 \
+                        -DHAVE_IB_GCC_ATOMIC_TEST_AND_SET=0
+}                        
 
 
 
