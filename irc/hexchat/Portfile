@@ -65,16 +65,14 @@ configure.args      --disable-dependency-tracking \
                     --enable-socks
 
 platform darwin 8 {
-    # sysinfo backend.m contains ObjC incompatible with Tiger even after 10.9 and lower patch
+    # sysinfo backend.m contains ObjC incompatible with Tiger
     configure.args-append --disable-sysinfo
-
-    # -fPIE flag is falsely identified by autoconf as compatible with 10.4 - remove manually
+    # strip out -fPIE flag as incompatible with Tiger
     post-configure {
          reinplace "s|-fPIE||g" ${worksrcpath}/Makefile
          reinplace "s|-fPIE||g" ${worksrcpath}/src/common/Makefile
     }
 }
-
 
 universal_variant   no
 
