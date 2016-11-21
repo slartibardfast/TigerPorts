@@ -19,9 +19,12 @@ You might wonder why there are not very many ports in TigerPorts -- and that is 
 Some examples of what is in TigerPorts:
 
 ```
-qt4-mac --> an older version that still works on Tiger, and allows many qt4 applications to install and work.
-libassuan --> a minor edit that allows it to compile on Tiger
+qt4-mac 4.7.4 --> last version that worked on Tiger; allows many qt4 applications to install and work.
+libassuan --> minor edit allows compiling on Tiger, declined by Macports repository
 mysql56 --> removed some ATOMIC functions that are not compatible with PPC, and this port now builds, installs, and runs on Tiger (and Leopard PPC, probably). However be aware that this version only passes about 90% of the mysql test suite. You might want to stick with mysql55 for Tiger, as it passes over 98% of the test suite.
-tmux --> older version that compiles and runs on Tiger
+tmux 1.9 --> last version that compiles and runs on Tiger
+ffmpeg 3.1.4 --> last version that builds against libsdl (libsdl2 is not compatible with PPC)
+Xvid --> strip out compile option not supported since gcc 3 and incompatible with newer gcc versions
+hexchat 2.12.1 -->  minor edit allows compiling on Tiger, declined by Macports repository
 ```
 If you have any contributions to make to this collection, please feel free to add, suggest, or put in a pull request!
