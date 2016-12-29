@@ -1,0 +1,2 @@
+gcc6 chokes on -fastf flag
+just reinplaced it out for now
