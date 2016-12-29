@@ -116,14 +116,6 @@ platform darwin {
     }
 }
 
-
-platform darwin 8 {
-    configure.args-delete \
-                      --system-libs \
-                      --no-system-jsoncpp
-    depends_lib-delete path:lib/pkgconfig/libuv.pc:libuv
-}
-
 configure.args-append --docdir=share/doc/cmake \
                     --parallel=${build.jobs} \
                     --init=${worksrcpath}/macports.cmake \
