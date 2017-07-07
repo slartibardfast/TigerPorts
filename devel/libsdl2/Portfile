@@ -27,8 +27,9 @@ patch.pre_args -p1
 configure.args-append     --without-x
 
 platform darwin 8 {
-    # not yet tested on Tiger
     patchfiles-append         patch-SDL2-2.0.3_OSX_104.diff
+
+    # the joystick code in sdl 2.0.3 is 10.5+ only
     configure.args-append     --disable-haptic
     configure.args-append     --disable-joystick
 }
