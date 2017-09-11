@@ -7,22 +7,10 @@ PortGroup           active_variants 1.1
 PortGroup           compiler_blacklist_versions 1.0
 PortGroup           cxx11 1.1
 
-# gtk3 +quartz uses instancetype which is not available
-# before approximately Xcode 4.6 (#49391)
-# if building +x11 blacklist comilers that do not support C11
-# (redefinition of typedef ‘GdkX11Monitor’ at gdkscreen-x11.h:33)
-
-if {[variant_isset quartz]} {
-    compiler.blacklist  {clang < 425}
-} else {
-    compiler.blacklist  {clang < 300}
-}
-
-
 name                gtk3
 set real_name       gtk+
 epoch               1
-version             3.22.17
+version             3.22.20
 set branch          [join [lrange [split ${version} .] 0 1] .]
 categories          gnome x11
 license             LGPL-2.1+
@@ -42,8 +30,8 @@ use_xz              yes
 
 master_sites        gnome:sources/gtk+/${branch}/
 
-checksums           rmd160  c0662bb1322c320b6cd93f297467be4c99ee4e9d \
-                    sha256  a6c1fb8f229c626a3d9c0e1ce6ea138de7f64a5a6bc799d45fa286fe461c3437
+checksums           rmd160  af9e67f8e9346ce8728a3c2f951427e3d19a4633 \
+                    sha256  70c90998a7809f60dc0a7439a68c34e59077dadb631657a6f9cab6a5539c02d9
 
 minimum_xcodeversions {9 3.1}
 
