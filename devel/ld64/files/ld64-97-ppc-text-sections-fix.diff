@@ -1,0 +1,12 @@
+--- src/ld/ld.cpp	2018-01-21 17:19:41.000000000 +0100
++++ src/ld/ld.cpp	2017-01-04 00:31:46.000000000 +0100
+@@ -134,7 +134,8 @@ Section::Section(const char* sectionName
+ 		else if ( strcmp(sectionName, "._load_cmds_pad") == 0 ) 
+ 			this->fIndex = 3;
+ 		// sort __text after load commands
+-		else if ( strcmp(sectionName, "__text") == 0 ) 
++		// FIXME: for branch islands to work the following code sections have to fit below { end of __text } + 2 MB - { size of branch island } or above { begin of __text } - 2 MB + { size of branch island }
++		else if ( strncmp(sectionName, "__text", strlen("__text")) == 0 ) 
+ 			this->fIndex = 10;
+ 		// sort arm/ppc stubs after text to make branch islands feasible
+ 		else if ( strcmp(sectionName, "__picsymbolstub4") == 0 ) 
