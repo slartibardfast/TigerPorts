@@ -30,3 +30,19 @@ depends_build       port:automake \
                     port:autoconf \
                     port:libtool \
                     port:pkgconfig
+
+# define this header block to prevent /usr/include/net/inet.h from being included
+# causes errors with OpenTransport defines
+configure.cppflags-append -D_NETINET_TCP_H_=1
+
+# disable built-in sendfile on 10.4 (whcih doesn't have it)
+patchfiles-append   patch-scr-unix-fs-sendfile.diff
+
+# patch out unknown struct stat members on 10.4 in fs.c and in tests
+# src/unix/fs.c:713: error: 'struct stat' has no member named 'st_birthtimespec'
+patchfiles-append   patch-src-unix-fs-birthtimespec.diff
+patchfiles-append   patch-test-test-fs.diff
+
+# tiger doesn't have the fsevents chops for libuv so disable it
+patchfiles-append   patch-src-unix-fsevents-tiger.diff
+
