@@ -3,7 +3,16 @@
 PortSystem      1.0
 PortGroup       compiler_blacklist_versions 1.0
 PortGroup       texlive 1.0
-#PortGroup       cxx11 1.1
+
+# on PPC, build with gcc6
+# 10.4 Intel, build with clang-3.8
+platform darwin powerpc {
+    PortGroup       cxx11 1.1
+}
+platform darwin 8 i386 {
+    compiler.whitelist macports-clang-3.8
+}
+
 
 # luajittex requires muniversal (and some patches to configure
 # scripts) to build universal
