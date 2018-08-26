@@ -1,0 +1,58 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:filetype=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem      1.0
+PortGroup       gobject_introspection 1.0
+
+name            libsecret
+version         0.18.6
+set branch      [join [lrange [split ${version} .] 0 1] .]
+maintainers     {jeremyhu @jeremyhu} openmaintainer
+categories      gnome
+platforms       darwin
+license         LGPL-2.1
+description     libsecret is a library for storing and retrieving passwords and other secrets
+
+long_description \
+    libsecrets is a client for the Secret Service DBus API. The Secret \
+    Service allows storage of passwords in a common way on the desktop. \
+    Supported by gnome-keyring and ksecretservice.
+
+homepage        https://wiki.gnome.org/Projects/Libsecret
+master_sites    gnome:sources/${name}/${branch}/
+use_xz          yes
+
+checksums       rmd160  95ba50baf3d4e54cfdc86d7531e5a5761d32f4cc \
+                sha256  5efbc890ba41a323ffe0599cd260fd12bd8eb62a04aa1bd1b2762575d253d66f \
+                size    487836
+
+depends_build   port:intltool \
+                port:pkgconfig \
+                port:libxslt \
+                port:gsed \
+                port:gtk-doc \
+                port:autoconf \
+                port:automake \
+                port:libtool
+
+depends_lib     path:lib/pkgconfig/glib-2.0.pc:glib2 \
+                port:vala \
+                port:libgcrypt
+
+gobject_introspection yes
+
+# reconfigure using upstream autogen.sh for intltool 0.51 compatibility
+
+post-patch {
+    xinstall -m 755 ${filespath}/autogen.sh ${worksrcpath}
+}
+
+configure.cmd   ./autogen.sh
+
+configure.args  --disable-silent-rules --disable-dependency-tracking
+
+post-patch {
+    # TODO: Remove this in the next version as it will probably be fixed upstream
+    reinplace "s|sed|${prefix}/bin/gsed|" ${worksrcpath}/libsecret/Makefile.am
+}
+
+livecheck.type  gnome

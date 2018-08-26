@@ -1,0 +1,69 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           muniversal 1.0
+
+name                bison
+subport             bison-runtime {}
+
+epoch               1
+version             3.0.5
+if {${subport} eq "bison"} {
+    revision        0
+} else {
+    revision        0
+}
+categories          devel
+platforms           darwin
+if {${subport} eq "bison-runtime"} {
+    supported_archs noarch
+}
+license             GPL-3+
+maintainers         nomaintainer
+
+if {${subport} eq "bison-runtime"} {
+    description         Localization support for Bison-generated parsers
+    long_description    The Bison parser generator provides \
+                        translations for its parser diagnostics. \
+                        Programs that contain Bison-generated parsers \
+                        can use these translations to generate \
+                        localized error messages.
+    installs_libs       no
+} else {
+    description         The Yacc-compatible Parser Generator
+    long_description    Bison is a general-purpose parser generator \
+                        that converts an annotated context-free \
+                        grammar into a deterministic LR or generalized \
+                        LR (GLR) parser employing LALR(1) parser \
+                        tables. As an experimental feature, Bison can \
+                        also generate IELR(1) or canonical LR(1) \
+                        parser tables. Once you are proficient with \
+                        Bison, you can use it to develop a wide range \
+                        of language parsers, from those used in simple \
+                        desk calculators to complex programming \
+                        languages.
+
+    depends_build       bin:perl:perl5
+    depends_lib         port:gettext
+    depends_run         port:bison-runtime \
+                        port:m4
+    depends_skip_archcheck-append m4
+}
+homepage            https://www.gnu.org/software/bison
+
+master_sites        gnu
+use_xz              yes
+checksums           rmd160  f13012d77dfddc8c5ed0c717f9006049ae17b8af \
+                    sha256  075cef2e814642e30e10e8155e93022e4a91ca38a65aa1d5467d4e969f97f338 \
+                    size    1954868
+
+configure.args      --disable-silent-rules
+
+if {${subport} eq "bison-runtime"} {
+    build.dir       ${worksrcpath}/runtime-po
+    livecheck.type  none
+} else {
+    patchfiles-append skip-runtime-po.patch
+    test.run        yes
+    test.target     check
+}
