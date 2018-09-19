@@ -1,0 +1,42 @@
+# $Id$
+
+PortSystem 1.0
+PortGroup xcode 1.0
+
+name			Lingon
+version			1.2.1
+categories		aqua sysutils
+platforms		darwin
+maintainers		bfulgham@macports.org
+homepage		http://lingon.sourceforge.net/
+description		Graphical interface for creating launchd configurations
+
+long_description	Lingon is a graphical interface for creating launchd configuration \
+			files and controlling them through launchctl for Mac OS X Tiger.
+			
+			
+master_sites		sourceforge:lingon
+checksums		md5 98ce7fab379623fa5d78ce841640fe8b
+
+use_zip			yes
+distname		${name}Source-${version}
+
+use_configure		no
+
+platform darwin 8 {
+	if {$xcodeversion == "2.1"} {
+		set xcodebuilddir	build/Deployment
+	}
+}
+
+build.type		pbx
+build.dir		${workpath}/${name}Source
+build.target		"Lingon"
+build.args		-configuration "Release"
+
+destroot	{
+	xinstall -m 755 -d ${destroot}/Applications/MacPorts
+	file copy ${workpath}/${name}Source/build/Release/${name}.app \
+		${destroot}/Applications/MacPorts
+}
+
