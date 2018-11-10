@@ -1,7 +1,7 @@
 PortSystem          1.0
 
 name                libuv
-version             1.20.3
+version             1.23.2
 
 categories          devel
 platforms           darwin
@@ -18,9 +18,9 @@ homepage            http://libuv.org/
 master_sites        http://dist.libuv.org/dist/v${version}/
 distname            ${name}-v${version}
 
-checksums           rmd160  11778a1761bb5eb94933abbc692f2c9b29b937b2 \
-                    sha256  3bb7aad916c7a5fd0053dcb6adee49905360a2a160f4a59bc62dbe4370328579 \
-                    size    1172777
+checksums           rmd160  59eb508fd8ab96f347b436d5ed255c70e02c7fca \
+                    sha256  8ab472ed816bb70c147ddbdfa7b9becfa10921df8a03faf2c87a54eac642c355 \
+                    size    1185303
 
 use_autoconf        yes
 autoconf.cmd        ./autogen.sh
