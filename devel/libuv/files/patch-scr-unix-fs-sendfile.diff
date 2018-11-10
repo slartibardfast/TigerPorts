@@ -1,15 +1,11 @@
-diff --git src/unix/fs.c src/unix/fs.c
-index d739c28..b9fedf9 100644
---- src/unix/fs.c
-+++ src/unix/fs.c
-@@ -554,7 +554,9 @@ static ssize_t uv__fs_sendfile(uv_fs_t* req) {
+--- src/unix/fs.c.orig  2016-10-24 06:52:33.000000000 -0700
++++ src/unix/fs.c       2018-11-09 20:17:35.000000000 -0800
+@@ -613,7 +613,7 @@
  
      return -1;
    }
--#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(__DragonFly__)
-+  
-+/* MACOSX 10.5 and greater have sendfile */
-+#elif defined(__FreeBSD__) || ( defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED > 1040) || defined(__DragonFly__)
-   {
-     off_t len;
-     ssize_t r;
+-#elif defined(__APPLE__)           || \
++#elif defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED > 1040  || \
+       defined(__DragonFly__)       || \
+       defined(__FreeBSD__)         || \
+       defined(__FreeBSD_kernel__)

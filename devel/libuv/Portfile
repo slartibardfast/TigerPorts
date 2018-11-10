@@ -1,10 +1,7 @@
-# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id$
-
 PortSystem          1.0
 
 name                libuv
-version             1.9.1
+version             1.10.0
 categories          devel
 platforms           darwin
 maintainers         raimue \
@@ -20,9 +17,9 @@ homepage            http://libuv.org/
 master_sites        http://dist.libuv.org/dist/v${version}/
 distname            ${name}-v${version}
 
-checksums           rmd160  5f6290710bc9d80c3b17767364e9f8a8f83c4004 \
-                    sha256  e83953782c916d7822ef0b94e8115ce5756fab5300cca173f0de5f5b0e0ae928 \
-                    size    1054443
+checksums           rmd160  971ad741d79cdd10f921869d8291a376c28fc2e9 \
+                    sha256  0307a0eec6caddd476f9cad39e18fdd6f22a08aa58103c4b0aead96d638be15e \
+                    size    1066125
 
 use_autoconf        yes
 autoconf.cmd        ./autogen.sh
@@ -33,22 +30,20 @@ depends_build       port:automake \
                     port:pkgconfig
 
 platform darwin 8 {
-# define this header block to prevent /usr/include/net/inet.h from being included
-# causes errors with OpenTransport defines
-configure.cppflags-append -D_NETINET_TCP_H_=1
 
-# disable built-in sendfile on 10.4 (whcih doesn't have it)
+# Tiger does not have sendfile in kernel
+# use fallback instead
 patchfiles-append   patch-scr-unix-fs-sendfile.diff
 
-# patch out unknown struct stat members on 10.4 in fs.c and in tests
 # src/unix/fs.c:713: error: 'struct stat' has no member named 'st_birthtimespec'
-patchfiles-append   patch-src-unix-fs-birthtimespec.diff
-patchfiles-append   patch-test-test-fs.diff
+# use fallback instead
+patchfiles-append   patch-src-unix-fs-birthtime-use-fallback.diff
+patchfiles-append   patch-test-test-fs-birthtime-use-fallback.diff
 
 # tiger doesn't have the fsevents chops for libuv so disable it
 patchfiles-append   patch-src-unix-fsevents-tiger.diff
 
-# patch tty.c - TIger has no TIOCPTYGNAME so use fallback
+# Tiger has no TIOCPTYGNAME so use fallback
 # implementation instead
 patchfiles-append patch-src-unix-tty-tiger-guard.diff
 
