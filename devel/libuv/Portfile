@@ -4,7 +4,7 @@
 PortSystem          1.0
 
 name                libuv
-version             1.8.0
+version             1.9.0
 categories          devel
 platforms           darwin
 maintainers         raimue \
@@ -20,9 +20,9 @@ homepage            http://libuv.org/
 master_sites        http://dist.libuv.org/dist/v${version}/
 distname            ${name}-v${version}
 
-checksums           rmd160  707716dcbd072376ae82a46c4457305cc0472499 \
-                    sha256  6511f734da4fe082dacf85967606d600b7bce557bb9b2f0d2539193535323125 \
-                    size    1042536
+checksums           rmd160  f00da8f07d0703c48e049c2b41e3b3e56ca47208 \
+                    sha256  d595b2725abcce851c76239aab038adc126c58714cfb572b2ebb2d21b3593842 \
+                    size    1050210
 
 use_autoconf        yes
 autoconf.cmd        ./autogen.sh
@@ -32,6 +32,7 @@ depends_build       port:automake \
                     port:libtool \
                     port:pkgconfig
 
+platform darwin 8 {
 # define this header block to prevent /usr/include/net/inet.h from being included
 # causes errors with OpenTransport defines
 configure.cppflags-append -D_NETINET_TCP_H_=1
@@ -47,3 +48,8 @@ patchfiles-append   patch-test-test-fs.diff
 # tiger doesn't have the fsevents chops for libuv so disable it
 patchfiles-append   patch-src-unix-fsevents-tiger.diff
 
+# patch tty.c - TIger has no TIOCPTYGNAME so use fallback
+# implementation instead
+patchfiles-append patch-src-unix-tty-tiger-guard.diff
+
+}
