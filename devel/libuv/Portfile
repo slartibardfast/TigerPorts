@@ -1,7 +1,7 @@
 PortSystem          1.0
 
 name                libuv
-version             1.15.0
+version             1.19.0
 
 categories          devel
 platforms           darwin
@@ -18,9 +18,9 @@ homepage            http://libuv.org/
 master_sites        http://dist.libuv.org/dist/v${version}/
 distname            ${name}-v${version}
 
-checksums           rmd160  324cc62e88f5f3c162d8b9104ac78807e42044e9 \
-                    sha256  28b1b334ae79fdbb025c7a4dacf3cb14738f9d336998bc42bbdbe72b8799fe85 \
-                    size    1150559
+checksums           rmd160  28fb05c3bf75bf2c84c1385481e84fbbbe48e1ca \
+                    sha256  fe8b305faa39b153fea0f1010a909b5bb369042598299286a01967f936338aa2 \
+                    size    1166973
 
 use_autoconf        yes
 autoconf.cmd        ./autogen.sh
@@ -33,25 +33,27 @@ depends_build       port:automake \
 test.run            yes
 test.target         check
 
-platform darwin 8 {
+# add missing strnlen definition
+# can be removed if we use legacysupport portgroup
+patchfiles-append   patch-src-unix-getaddrinfo-strnlen.diff
 
-configure.cppflags-append -D__DARWIN_UNIX03
-
-
-# Tiger does not have sendfile - use fallback instead
-# Tiger does not have copyfile - use fallback instead
-# src/unix/fs.c:713: error: 'struct stat' has no member named 'st_birthtimespec' use fallback instead
+# Tiger does not have sendfile or copyfile - use fallback instead
+# Tiger does not have 'st_birthtimespec' use fallback instead
 patchfiles-append   patch-src-unix-fs-Tiger.diff
 patchfiles-append   patch-test-test-fs-birthtime-use-fallback.diff
 
-# tiger doesn't have the fsevents chops for libuv so disable it
+# tiger does not have fsevents framework. Disable it as per iphoneOS.
 patchfiles-append   patch-src-unix-fsevents-tiger.diff
 
-# Tiger has no TIOCPTYGNAME so use fallback
-# implementation instead
+# Tiger does not have TIOCPTYGNAME - use fallback instead
 patchfiles-append   patch-src-unix-tty-tiger-guard.diff
 
-# Tiger has no libutil
-patchfiles-append   patch-makefile-am-no-libutil-on-Tiger.diff
+
+platform darwin 8 {
+
+	configure.cppflags-append -D__DARWIN_UNIX03
+	
+	# Tiger has no libutil
+	patchfiles-append   patch-makefile-am-no-libutil-on-Tiger.diff
 
 }
