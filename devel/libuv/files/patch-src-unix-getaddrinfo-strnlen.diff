@@ -6,7 +6,7 @@ index 0185971..f5dcd91 100644
      freeaddrinfo(ai);
  }
  
-+#if ( defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED < 1070 )
+#if ( defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= 1070)
 +size_t
 +strnlen(const char *s, size_t maxlen)
 +{
