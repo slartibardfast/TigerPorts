@@ -1,7 +1,7 @@
 PortSystem          1.0
 
 name                libuv
-version             1.19.0
+version             1.20.3
 
 categories          devel
 platforms           darwin
@@ -18,9 +18,9 @@ homepage            http://libuv.org/
 master_sites        http://dist.libuv.org/dist/v${version}/
 distname            ${name}-v${version}
 
-checksums           rmd160  28fb05c3bf75bf2c84c1385481e84fbbbe48e1ca \
-                    sha256  fe8b305faa39b153fea0f1010a909b5bb369042598299286a01967f936338aa2 \
-                    size    1166973
+checksums           rmd160  11778a1761bb5eb94933abbc692f2c9b29b937b2 \
+                    sha256  3bb7aad916c7a5fd0053dcb6adee49905360a2a160f4a59bc62dbe4370328579 \
+                    size    1172777
 
 use_autoconf        yes
 autoconf.cmd        ./autogen.sh
@@ -34,7 +34,7 @@ test.run            yes
 test.target         check
 
 # add missing strnlen definition
-# can be removed if we use legacysupport portgroup
+# can be removed if we use legacysupport portgroup instead
 patchfiles-append   patch-src-unix-getaddrinfo-strnlen.diff
 
 # Tiger does not have sendfile or copyfile - use fallback instead
@@ -51,7 +51,11 @@ patchfiles-append   patch-src-unix-tty-tiger-guard.diff
 
 platform darwin 8 {
 
+    # user some newer function definitions eg unsetenv
 	configure.cppflags-append -D__DARWIN_UNIX03
+	
+	# prevent conflicting opentransport header from being pulled in
+	configure.cppflags-append -D__OPENTRANSPORTPROVIDERS__
 	
 	# Tiger has no libutil
 	patchfiles-append   patch-makefile-am-no-libutil-on-Tiger.diff
