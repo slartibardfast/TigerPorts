@@ -131,7 +131,8 @@ configure.args-append   --disable-pdf-build \
                         --disable-gl \
                         --disable-zsh-comp \
                         --disable-javascript \
-                        --disable-uchardet
+                        --disable-uchardet \
+                        --enable-sdl2
 
 # Fix picking up the correct talloc version.
 # -isystem has the added benefit of moving the include
@@ -457,7 +458,7 @@ variant jack description {Enable Jack Audio Connection Kit support} {
 
 # TODO: switch that to openal-soft? Leave it as-is?
 variant openal description {Enable OpenAL support} {
-    depends_lib-append      port:openal
+#    depends_lib-append      port:openal
     configure.args-replace  --disable-openal \
                             --enable-openal
 }
