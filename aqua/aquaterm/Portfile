@@ -1,46 +1,50 @@
-# $Id$
+PortSystem              1.0
+PortGroup               xcode 1.0
+name                    aquaterm
+version                 1.0.1
+revision                2
+categories              aqua math science
+maintainers             {kencu @kencu} openmaintainer
+license                 BSD
+description             AquaTerm is a viewer that displays vector graphics on Mac OS X
+long_description        AquaTerm is a viewer app that displays vector \
+                        graphics.  Other apps connect to AquaTerm using a \
+                        simple remote object messaging protocol.  By adding \
+                        \"adapters\" to legacy code very little coding is \
+                        needed to bring it to OS X.
+platforms               darwin
+homepage                http://aquaterm.sourceforge.net/
+master_sites            sourceforge
+distname                ${name}_src.${version}
 
-PortSystem		1.0
-PortGroup		xcode 1.0
+checksums               rmd160  24410589dd8c3071b6e0d5e652b7d92933d86b5f \
+                        sha256  5178b32ac26d5411ee29eb192329341eedc69703326588cfb777f62b45acae4f \
+                        size    305818
 
-name			aquaterm
-version			1.0.1
-revision		1
-categories		aqua math science
-maintainers		davidm@astro.berkeley.edu
-description		AquaTerm is a viewer that displays vector graphics on Mac OS X
-long_description	AquaTerm is a viewer app that displays vector \
-					graphics.  Other apps connect to AquaTerm using a \
-					simple remote object messaging protocol.  By adding \
-					\"adapters\" to legacy code very little coding is \
-					needed to bring it to OS X.
-platforms		darwin
-homepage		http://aquaterm.sourceforge.net/
-master_sites	sourceforge
-distname		${name}_src.${version}
+worksrcdir              ${name}
 
-checksums		md5 e9d3ecdfe770d6f09a748add9886d1a9 \
-				sha1 d5770bb3a95cfae21c5c39c96171a52d9af8ae24 \
-				rmd160 24410589dd8c3071b6e0d5e652b7d92933d86b5f
+patchfiles              patch-frameworks-dir.diff \
+                        patch-disable-universal.diff
 
-worksrcdir		${name}
+xcode.target            AquaTerm
 
-patchfiles		patch-frameworks-dir.diff \
-                patch-disable-universal.diff
+xcode.build.settings    USER_APPS_DIR=${applications_dir} \
+                        FRAMEWORKS_DIR=${frameworks_dir}
 
-xcode.target	AquaTerm
-
-# Can be removed once MacPorts 1.7.0 is released
-if {![info exists applications_dir]} {
-	set applications_dir /Applications/MacPorts
-}
-if {![info exists frameworks_dir]} {
-	set frameworks_dir ${prefix}/Library/Frameworks
-}
-
-xcode.build.settings	USER_APPS_DIR=${applications_dir} \
-						FRAMEWORKS_DIR=${frameworks_dir}
-
-xcode.destroot.type		mixed
+xcode.destroot.type     mixed
 xcode.destroot.settings USER_APPS_DIR=${applications_dir} \
-						FRAMEWORKS_DIR=${frameworks_dir}
+                        FRAMEWORKS_DIR=${frameworks_dir}
+
+post-destroot {
+    xinstall -d -m 0755 ${destroot}${prefix}/share/AquaTerm
+    copy ${worksrcpath}/../adapters ${destroot}${prefix}/share/AquaTerm
+}
+
+livecheck               none
+
+# notes -- tried to build current aquaterm 1.1.1 in MacPorts repo on Tiger but
+# failed due to numerous errors. Some could be overcome by symlinking in
+# apple-gcc-4.2 instead of gcc-4.0 in /Developer/usr/bin but still had both
+# assembly errors and what appeared to be SDK errors after that
+# might be some hope using a newer 10.5 SDK instead; untested
+# builds fine on Leopard PPC
