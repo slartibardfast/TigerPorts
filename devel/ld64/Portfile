@@ -44,7 +44,7 @@ subport ld64-97 {
     
     # XCode 3.2.6
     version             97.17
-    revision            9
+    revision            10
 
     set makefile	"Makefile-97"
     set ld64_ver        97
@@ -62,7 +62,9 @@ subport ld64-97 {
         ld64-97-BaseAtomImplicitDecl.patch \
         ld64-97-no-ppc-thread_status.patch \
         ld64-97-configured_architectures.patch \
-        ld64-97-ppc-text-sections-fix.diff
+        ld64-97-ppc-text-sections-fix.diff \
+        ld64-97-no-error-rpath-tiger.diff \
+        ld64-97-dont-output-rpath-atom.diff
 
     if {${os.major} >= 14} {
         pre-fetch {
