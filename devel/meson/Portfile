@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           python 1.0
 PortGroup           github 1.0
 
-github.setup        mesonbuild meson 0.47.1
+github.setup        mesonbuild meson 0.49.2
 github.tarball_from releases
 license             Apache-2
 categories          devel python
@@ -12,7 +12,7 @@ maintainers         nomaintainer
 platforms           darwin
 supported_archs     noarch
 installs_libs       no
-homepage            http://mesonbuild.com/
+homepage            https://mesonbuild.com/
 
 description         Meson - a high productivity build system
 long_description    Meson  is  a  build system designed to optimize programmer productivity. \
@@ -21,9 +21,9 @@ long_description    Meson  is  a  build system designed to optimize programmer p
                     Valgrind,  CCache  and  the like. It is both extremely fast, and, even more importantly, \
                     as user friendly as possible.
 
-checksums           rmd160  6c6fbe06e908c644b94e07f2d1ef0c3174efcce6 \
-                    sha256  d673de79f7bab064190a5ea06140eaa8415efb386d0121ba549f6d66c555ada6 \
-                    size    1250085
+checksums           rmd160  8e3b7fa5b47791a65289dad7982e818a8dfdcc79 \
+                    sha256  ef9f14326ec1e30d3ba1a26df0f92826ede5a79255ad723af78a2691c37109fd \
+                    size    1340804
 
 # as of verison 0.45.0,requires python 3.5 or better
 
@@ -34,18 +34,43 @@ python.link_binaries    no
 depends_build-append \
                     port:py${python.version}-setuptools
 
-depends_lib-append \
+depends_run-append \
+                    port:py${python.version}-setuptools \
                     port:ninja
                     
 platform darwin 8 {
-    patchfiles-append patch-meson-tiger-fix.diff
+#    patchfiles-append patch-meson-tiger-fix.diff
+}
+
+# requires a newer install_name_tool on older systems
+if {${os.platform} eq "darwin" && ${os.major} <= 9} {
+    depends_run-append \
+                    port:cctools
+
 }
 
 post-destroot {
     set python_prefix ${frameworks_dir}/Python.framework/Versions/${python.branch}
-    foreach bname {meson mesonconf mesonintrospect mesontest wraptool} {
-        ln -s  ${python_prefix}/bin/${bname} ${destroot}${prefix}/bin/${bname}
-        ln -s  ${python_prefix}/share/man/man1/${bname}.1 ${destroot}${prefix}/share/man/man1
+    ln -s  ${python_prefix}/bin/meson ${destroot}${prefix}/bin/meson
+    ln -s  ${python_prefix}/share/man/man1/meson.1 ${destroot}${prefix}/share/man/man1
+}
+
+# the following block avoids requiring users to 'sudo port select python3 python37'
+# doing a file test for ${prefix}/bin/python3 and requiring this 
+# to be honest would have been much simpler, but not the "MacPorts way"
+pre-test {
+    reinplace "s|/usr/bin/env python3|/usr/bin/env python3.7|" \
+        ${worksrcpath}/run_tests.py \
+        ${worksrcpath}/run_cross_test.py \
+        ${worksrcpath}/run_meson_command_tests.py \
+        ${worksrcpath}/run_project_tests.py \
+        ${worksrcpath}/run_unittests.py
+
+    set testpath "${worksrcpath}/test\\ cases"
+    fs-traverse f ${testpath} {
+        if { [string match *.py ${f}] } {
+            reinplace "s|/usr/bin/env python3|/usr/bin/env python3.7|" ${f}
+        }
     }
 }
 
