@@ -31,7 +31,7 @@ if {${subport} eq "llvm-${llvm_version}"} {
                         the LLVM intermediate representation ("LLVM IR").
 
     depends_lib         port:libedit port:libffi port:ncurses port:zlib port:python27
-    depends_run         bin:perl:perl5 port:llvm_select
+    depends_run         port:llvm_select
 } elseif {${subport} eq "clang-${llvm_version}"} {
     homepage            http://clang.llvm.org/
     description         C, C++, Objective C and Objective C++ compiler
@@ -46,14 +46,10 @@ if {${subport} eq "llvm-${llvm_version}"} {
                         that can be built using the Clang frontend as a \
                         library to parse C/C++ code.
 
-    depends_lib         port:libxml2 port:libomp port:llvm-${llvm_version} port:python27
+#    depends_lib         port:libxml2 port:libomp port:llvm-${llvm_version} port:python27
+    depends_lib         port:llvm-${llvm_version} port:python27
     depends_run         port:clang_select port:ld64
     depends_skip_archcheck-append ld64
-
-    # Clang doesn't actually use any of these, but the LLVM makefile
-    # system overlinks its binaries. Remove (or convert to build deps?)
-    # after #46040 is resolved.
-    depends_lib-append  port:libedit port:libffi port:ncurses port:zlib
 
     # Older Xcode's lipo doesn't support x86_64h slices
     # https://trac.macports.org/ticket/53159#ticket
@@ -62,23 +58,8 @@ if {${subport} eq "llvm-${llvm_version}"} {
         depends_skip_archcheck-append cctools
     }
 
-    default_variants    +analyzer
+#    default_variants    +analyzer
 }
-
-#fetch.type              svn
-#svn.revision            262722
-#
-#set compiler_rt_rev     ${svn.revision}
-#set libcxx_rev          ${svn.revision}
-#set clang-modernize_rev ${svn.revision}
-#version                 ${llvm_version}-r${svn.revision}
-#revision                1
-#worksrcdir              trunk
-#svn.url                 https://llvm.org/svn/llvm-project/llvm/trunk
-#worksrcdir              release_${llvm_version_no_dot}
-#svn.url                 https://llvm.org/svn/llvm-project/llvm/branches/release_${llvm_version_no_dot}
-#default_variants-append +assertions
-#default_variants-append +debug
 
 version                 ${llvm_version}.1
 epoch                   1
@@ -178,18 +159,6 @@ if {${subport} eq "clang-${llvm_version}"} {
     patchfiles-delete \
         0005-MacPorts-Only-Skip-checking-for-python-in-configure.patch
 
-    # https://llvm.org/bugs/show_bug.cgi?id=25681
-    if {${worksrcdir} eq "trunk" || ${worksrcdir} eq "release_${llvm_version_no_dot}"} {
-        # Cannot set cppflags due to https://cmake.org/Bug/view.php?id=12928
-        # Cannot set cxxflags due to https://llvm.org/bugs/show_bug.cgi?id=25904
-        #configure.cxxflags-append -DSVN_REVISION='"${svn.revision}"'
-
-        post-patch {
-            reinplace "1 i \\                             
-                #define SVN_REVISION \"${svn.revision}\"
-            " ${worksrcpath}/tools/clang/lib/Basic/Version.cpp
-        }
-    }
 }
 
 configure.post_args         ../${worksrcdir}
@@ -234,7 +203,8 @@ if {${subport} eq "llvm-${llvm_version}"} {
         -DCLANG_INCLUDE_TESTS=OFF \
         -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
         -DLLVM_BUILD_RUNTIME=ON \
-        -DLIBCXX_INSTALL_LIBRARY=OFF
+        -DLIBCXX_INSTALL_LIBRARY=OFF \
+        -DCLANG_ENABLE_ARCMT=OFF
 }
 
 # llvm-3.5 and later requires a C++11 runtime
@@ -287,10 +257,12 @@ if {${subport} eq "clang-${llvm_version}" && ${os.major} <= 10} {
 #}
 
 platform darwin 8 i386 {
-    # on Tiger, we are going to build clang-3.8 using gcc7
+    # on Tiger Intel, we are going to build clang-3.8 using gcc7
     # it can link against libstdc++, or gcc5+'s libstdc++ to get cxx11, using
     # -stdlib=macports-libstdc++ 
     
+    configure.args-append -DLLVM_TARGETS_TO_BUILD=\"X86\;PowerPC\"
+
     #clear the compiler blacklisting above
     compiler.blacklist
     
@@ -298,14 +270,15 @@ platform darwin 8 i386 {
     compiler.whitelist macports-gcc-7
     supported_archs i386 x86_64
     
+
     default_variants +libstdcxx
 
     # we might be able to build this as x86_64 on Tiger someday
     universal_variant no
 
-    patchfiles-append patch-clang-3.8-compilerRTDarwinUtils-tiger-only.diff
-
-
+    if {${subport} eq "clang-${llvm_version}"} {
+        patchfiles-append patch-clang-3.8-compilerRTDarwinUtils-tiger-only.diff
+    }
 }
 
 
@@ -369,12 +342,7 @@ post-extract {
             }
         }
     } elseif {${subport} eq "clang-${llvm_version}"} {
-        if {${worksrcdir} eq "trunk"} {
-            system -W ${worksrcpath}/tools "svn ${proxy_args} co -r ${svn.revision} http://llvm.org/svn/llvm-project/cfe/trunk clang"
-            system -W ${worksrcpath}/projects "svn ${proxy_args} co -r ${compiler_rt_rev} http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt"
-            system -W ${worksrcpath}/projects "svn ${proxy_args} co -r ${libcxx_rev} http://llvm.org/svn/llvm-project/libcxx/trunk libcxx"
-            system -W ${worksrcpath}/tools/clang/tools "svn ${proxy_args} co -r ${clang-modernize_rev} http://llvm.org/svn/llvm-project/clang-tools-extra/trunk extra"
-        } elseif {${worksrcdir} eq "release_${llvm_version_no_dot}" } {
+        if {${worksrcdir} eq "release_${llvm_version_no_dot}" } {
             system -W ${worksrcpath}/tools "svn ${proxy_args} co -r ${svn.revision} http://llvm.org/svn/llvm-project/cfe/branches/release_${llvm_version_no_dot} clang"
             system -W ${worksrcpath}/projects "svn ${proxy_args} co -r ${compiler_rt_rev} http://llvm.org/svn/llvm-project/compiler-rt/branches/release_${llvm_version_no_dot} compiler-rt"
             system -W ${worksrcpath}/projects "svn ${proxy_args} co -r ${libcxx_rev} http://llvm.org/svn/llvm-project/libcxx/branches/release_${llvm_version_no_dot} libcxx"
@@ -433,16 +401,6 @@ post-destroot {
 if {${subport} eq "llvm-${llvm_version}"} {
     variant polly description {Provide the polly polyhedral optimizer} {}
 
-    # Unless upstream reverts to their old OCaml detection mechanism,
-    # this variant will be broken until #46161 is resolved.
-    variant ocaml description {Enable generation of OCaml binding} {
-        depends_lib-append   port:ocaml
-
-        configure.args-delete -DLLVM_BINDINGS_LIST=none
-        configure.args-append -DLLVM_BINDINGS_LIST=ocaml
-
-        destroot.args-append  OVERRIDE_libdir=${sub_prefix}/lib
-    }
 } elseif {${subport} eq "clang-${llvm_version}"} {
     if {[variant_isset assertions]} {
         # Need to match llvm +-assertions
@@ -473,7 +431,7 @@ if {${subport} eq "llvm-${llvm_version}"} {
     
     
     variant libstdcxx description {-stdlib=macports-libstdc++ searches for MacPorts libstdc++} {
-        depends_lib-append port:gcc6
+        #depends_lib-append port:gcc6
 
         patchfiles-append 9001-macports-libstdcxx-3.8.diff
 
