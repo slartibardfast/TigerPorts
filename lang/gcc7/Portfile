@@ -386,6 +386,17 @@ build.env-append \
 # we probably also want to clear out the rest of the configure.XYZ flags
 configure.optflags
 
+# gcc i386 misconfigures if our cctools as modification sends it to clang for assembly
+# export suitable ENVVARS to the build to force the traditional expected gas behaviour
+# have gcc build pass these ENVARS to the build process where it is needed
+if {${build_arch} eq "i386"} {
+    configure.env-append DISABLE_MACPORTS_AS_CLANG_SEARCH
+    build.env-append     DISABLE_MACPORTS_AS_CLANG_SEARCH
+    configure.env-append DISABLE_XCODE_AS_CLANG_SEARCH
+    build.env-append     DISABLE_XCODE_AS_CLANG_SEARCH
+    patchfiles-append patch-gcc-set-envvars-to-force-gas-assembler-Makefile.diff
+}
+
 configure.cc-append [get_canonical_archflags]
 configure.cc_archflags
 configure.cxx-append ${configure.cxx_archflags}
