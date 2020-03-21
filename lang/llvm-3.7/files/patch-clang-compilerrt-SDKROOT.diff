@@ -1,0 +1,11 @@
+--- llvm-3.7.1.src/projects/compiler-rt/make/platform/clang_darwin.mk.orig	2020-03-21 00:01:37.000000000 -0700
++++ llvm-3.7.1.src/projects/compiler-rt/make/platform/clang_darwin.mk	2020-03-21 00:02:46.000000000 -0700
+@@ -69,7 +69,7 @@
+ LIPO     := /opt/local/bin/lipo
+ DSYMUTIL := /opt/local/bin/dsymutil
+ 
+-OSX_SDK := $(call XCRunSdkPath,macosx)
++OSX_SDK := @@SDKROOT@@
+ IOS_SDK := $(call XCRunSdkPath,iphoneos)
+ IOSSIM_SDK := $(call XCRunSdkPath,iphonesimulator)
+ 
