@@ -737,6 +737,8 @@ if {${subport} eq "llvm-${llvm_version}"} {
 livecheck.type          none
 
 post-destroot {
+platfore darwin 8 {
+
 
 # manually fix up the dylib names, as the rpath method is disabled on Tiger
 # there may be a way to fix this better in the patched rpath cmake function above, but this is practically working, for now
@@ -750,11 +752,19 @@ system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
 
 }
 
+if {${subport} eq "clang-${llvm_version}"} {
+
+system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libclang.dylib .${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
+system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
+system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+    "find . -type f -print0 | xargs -0 -n 1 sudo install_name_tool -change libclang.dylib ${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
+
+}
 
 
 
 
-
+}
 }
 
 # after installation, had to fix install names for several libraries:
