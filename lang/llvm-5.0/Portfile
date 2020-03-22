@@ -736,13 +736,34 @@ if {${subport} eq "llvm-${llvm_version}"} {
 
 livecheck.type          none
 
+post-destroot {
+
+# manually fix up the dylib names, as the rpath method is disabled on Tiger
+# there may be a way to fix this better in the patched rpath cmake function above, but this is practically working, for now
+if {${subport} eq "llvm-${llvm_version}"} {
+
+system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib"
+system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libLTO.dylib  .${prefix}/libexec/llvm-5.0/lib/libLTO.dylib"
+system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libLTO.dylib"
+system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+    "find . -type f -print0 | xargs -0 -n 1 sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib"
+
+}
+
+
+
+
+
+
+}
+
 # after installation, had to fix install names for several libraries:
 # sudo install_name_tool -id /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib
 # sudo install_name_tool -id /opt/local/libexec/llvm-5.0/lib/libLTO.dylib /opt/local/libexec/llvm-5.0/lib/libLTO.dylib
 # sudo install_name_tool -change libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLTO.dylib
 
 # and this seems to work for the binaries, from the /opt/local/libexec/llvm-5.0/bin directory
-# find . -print0 | xargs -0 -n 1 -p sudo install_name_tool -change libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib
+# find . -type f -print0 | xargs -0 -n 1 -p sudo install_name_tool -change libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib
 
 # this might be better fixed in the cmake script function
 
