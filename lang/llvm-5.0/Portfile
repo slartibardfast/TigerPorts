@@ -398,6 +398,8 @@ platform darwin 8 i386 {
 
     if {${subport} eq "clang-${llvm_version}"} {
         patchfiles-append patch-clang-3.8-compilerRTDarwinUtils-tiger-only.diff
+        patchfiles-append patch-clang5-builtins-clear-cache-libkern-oscachcontrol.diff
+        patchfiles-append patch-clang5-lib-rt-deployment-tiger.diff
     }
 }
 
@@ -737,55 +739,35 @@ if {${subport} eq "llvm-${llvm_version}"} {
 livecheck.type          none
 
 post-destroot {
-platfore darwin 8 {
+    platform darwin 8 {
+        # manually fix up the dylib names, as the rpath method is disabled on Tiger
+        # there may be a way to fix this better in the patched rpath cmake function above, but this is practically working, for now
 
-
-# manually fix up the dylib names, as the rpath method is disabled on Tiger
-# there may be a way to fix this better in the patched rpath cmake function above, but this is practically working, for now
-if {${subport} eq "llvm-${llvm_version}"} {
-
-system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib"
-system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libLTO.dylib  .${prefix}/libexec/llvm-5.0/lib/libLTO.dylib"
-system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libLTO.dylib"
-system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
-    "find . -type f -print0 | xargs -0 -n 1 sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib"
-
+        if {${subport} eq "llvm-${llvm_version}"} {
+        
+            system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib"
+            system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libLTO.dylib  .${prefix}/libexec/llvm-5.0/lib/libLTO.dylib"
+            system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libLTO.dylib"
+        
+            # this works here, but not with clang, as there are non-object files in the clang build
+            system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+                "find . -type f -print0 | xargs -0 -n 1 sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib"
+        
+        }
+    
+        if {${subport} eq "clang-${llvm_version}"} {
+        
+            system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libclang.dylib .${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
+            system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
+        
+            foreach tool {c-index-test clang clang-apply-replacements clang-change-namespace clang-format clang-import-test clang-include-fixer clang-offload-bundler \
+                          clang-query clang-rename clang-reorder-fields clangd find-all-symbols modularize} {
+                system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+                    "sudo install_name_tool -change libclang.dylib ${prefix}/libexec/llvm-5.0/lib/libclang.dylib ${tool}"
+                system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+                    "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib ${tool}"
+            }
+        
+        }
+    }
 }
-
-if {${subport} eq "clang-${llvm_version}"} {
-
-system -W ${workpath}/destroot "sudo install_name_tool -id ${prefix}/libexec/llvm-5.0/lib/libclang.dylib .${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
-system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-5.0/lib/libLLVM.dylib .${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
-system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
-    "find . -type f -print0 | xargs -0 -n 1 sudo install_name_tool -change libclang.dylib ${prefix}/libexec/llvm-5.0/lib/libclang.dylib"
-
-}
-
-
-
-
-}
-}
-
-# after installation, had to fix install names for several libraries:
-# sudo install_name_tool -id /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib
-# sudo install_name_tool -id /opt/local/libexec/llvm-5.0/lib/libLTO.dylib /opt/local/libexec/llvm-5.0/lib/libLTO.dylib
-# sudo install_name_tool -change libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLTO.dylib
-
-# and this seems to work for the binaries, from the /opt/local/libexec/llvm-5.0/bin directory
-# find . -type f -print0 | xargs -0 -n 1 -p sudo install_name_tool -change libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib
-
-# this might be better fixed in the cmake script function
-
-# building clang-5.0 required some further tweaks
-# in lib/builtins/clear_cache.c disable APPLE test for libkern/OSCacheControl.h
-# in /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers/MacTypes.h
-# here I had to comment out the pragma options align=mac68k to complete the build
-
-# and then more binaries were installed, so repeat t he xargs bit above to fix the linkages
-# and then fix libclang.dylib
-# sudo install_name_tool -id /opt/local/libexec/llvm-5.0/lib/libclang.dylib /opt/local/libexec/llvm-5.0/lib/libclang.dylib
-# sudo install_name_tool -change libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libLLVM.dylib /opt/local/libexec/llvm-5.0/lib/libclang.dylib
-
-# then fix up the clang links
-# sudo install_name_tool -change libclang.dylib /opt/local/libexec/llvm-5.0/lib/libclang.dylib /opt/local/libexec/llvm-5.0/bin/c-index-test

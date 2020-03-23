@@ -1,0 +1,11 @@
+--- llvm-5.0.2.src/projects/compiler-rt/cmake/builtin-config-ix.cmake.orig	2020-03-22 12:05:20.000000000 -0700
++++ llvm-5.0.2.src/projects/compiler-rt/cmake/builtin-config-ix.cmake	2020-03-22 12:05:30.000000000 -0700
+@@ -56,7 +56,7 @@
+   find_darwin_sdk_dir(DARWIN_tvos_SYSROOT appletvos)
+ 
+   set(DARWIN_EMBEDDED_PLATFORMS)
+-  set(DARWIN_osx_BUILTIN_MIN_VER 10.5)
++  set(DARWIN_osx_BUILTIN_MIN_VER 10.4)
+   set(DARWIN_osx_BUILTIN_MIN_VER_FLAG
+       -mmacosx-version-min=${DARWIN_osx_BUILTIN_MIN_VER})
+ 

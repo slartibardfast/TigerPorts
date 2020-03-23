@@ -16,7 +16,7 @@ index 267af388ecd..1c8c1b026e3 100644
  #include "llvm/ADT/Twine.h"
  
  #if defined(__APPLE__)
-+#include <Availability.h>
++#include <AvailabilityMacros.h>
  #include <mach/mach_init.h>
  #include <mach/mach_port.h>
  #endif
@@ -24,7 +24,7 @@ index 267af388ecd..1c8c1b026e3 100644
    ::pthread_setname_np(::pthread_self(), "%s",
      const_cast<char *>(NameStr.data()));
  #elif defined(__APPLE__)
-+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
++#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
    ::pthread_setname_np(NameStr.data());
  #endif
 +#endif
