@@ -1,0 +1,14 @@
+--- llvm-7.1.0.src/projects/libcxx/src/filesystem/operations.cpp.orig	2020-03-24 07:47:45.000000000 -0700
++++ llvm-7.1.0.src/projects/libcxx/src/filesystem/operations.cpp	2020-03-24 08:01:22.000000000 -0700
+@@ -33,9 +33,11 @@
+ #define _LIBCPP_USE_SENDFILE
+ #endif
+ #elif defined(__APPLE__) || __has_include(<copyfile.h>)
++#if MAC_OS_X_VERSION_MIN_REQUIRED > 1050
+ #include <copyfile.h>
+ #define _LIBCPP_USE_COPYFILE
+ #endif
++#endif
+ 
+ #if !defined(__APPLE__)
+ #define _LIBCPP_USE_CLOCK_GETTIME

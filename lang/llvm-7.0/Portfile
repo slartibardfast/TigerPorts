@@ -395,6 +395,7 @@ platform darwin 8 i386 {
         patchfiles-append patch-clang-3.8-compilerRTDarwinUtils-tiger-only.diff
         patchfiles-append patch-clang5-builtins-clear-cache-libkern-oscachcontrol.diff
         patchfiles-append patch-clang5-lib-rt-deployment-tiger.diff
+        patchfiles-append patch-clang7-libcxx-src-filesystems-no-copyfile-on-Tiger.diff
     }
 }
 
@@ -761,10 +762,10 @@ post-destroot {
             system -W ${workpath}/destroot "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-${llvm_version}/lib/libLLVM.dylib .${prefix}/libexec/llvm-${llvm_version}/lib/libclang.dylib"
         
             foreach tool {c-index-test clang clang-apply-replacements clang-change-namespace clang-format clang-import-test clang-include-fixer clang-offload-bundler \
-                          clang-query clang-rename clang-reorder-fields clangd find-all-symbols modularize} {
-                system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+                          clang-query clang-refactor clang-rename clang-reorder-fields diagtool find-all-symbols modularize} {
+                system -W ${workpath}/destroot${prefix}/libexec/llvm-${llvm_version}/bin \
                     "sudo install_name_tool -change libclang.dylib ${prefix}/libexec/llvm-${llvm_version}/lib/libclang.dylib ${tool}"
-                system -W ${workpath}/destroot${prefix}/libexec/llvm-5.0/bin \
+                system -W ${workpath}/destroot${prefix}/libexec/llvm-${llvm_version}/bin \
                     "sudo install_name_tool -change libLLVM.dylib ${prefix}/libexec/llvm-${llvm_version}/lib/libLLVM.dylib ${tool}"
             }
         

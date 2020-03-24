@@ -1,0 +1,11 @@
+--- llvm-5.0.2.src/projects/compiler-rt/lib/builtins/clear_cache.c.orig	2020-03-22 11:57:35.000000000 -0700
++++ llvm-5.0.2.src/projects/compiler-rt/lib/builtins/clear_cache.c	2020-03-22 11:58:50.000000000 -0700
+@@ -11,7 +11,7 @@
+ #include "int_lib.h"
+ #include <stddef.h>
+ 
+-#if __APPLE__
++#if __APPLE__ && MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
+   #include <libkern/OSCacheControl.h>
+ #endif
+ 
