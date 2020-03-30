@@ -52,6 +52,7 @@ patchfiles-append   patch-meson-32bit-apple.diff
 
 platform darwin 8 {
     patchfiles-append patch-meson53-no-rpath-on-Tiger.diff
+    patchfiles-append patch-meson53-gnome-no-rpath-on-tiger.diff
 }
 
 post-destroot {
