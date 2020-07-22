@@ -54,4 +54,13 @@ if {[variant_isset universal]} {
     destroot.env-append    "CC=${configure.cc} ${configure.cc_archflags}"
 }
 
+post-destroot {
+    platform darwin 8 {
+        ui_msg "changing install name - Tiger hack due to broken meson"
+        system "install_name_tool -change @loader_path/libatspi.0.dylib \
+                    ${prefix}/lib/libatspi.0.dylib \
+                    ${destroot}${prefix}/libexec/at-spi2-registryd"
+    }
+}
+
 livecheck.type      gnome
